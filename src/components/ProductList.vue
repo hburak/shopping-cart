@@ -13,11 +13,6 @@
         </li>
       </ul>
     </div>
-    <h2>Cart</h2>
-    <ul>
-      <li v-for="item in cart" :key="item.id">{{ item.title }} - {{ item.quantity }}</li>
-    </ul>
-    <p>Total cart price: {{ this.$store.getters.total }}</p>
   </div>
 </template>
 
@@ -26,9 +21,6 @@ export default {
   computed: {
     products() {
       return this.$store.getters.availableProducts;
-    },
-    cart() {
-      return this.$store.getters.cart;
     }
   },
   data() {
