@@ -9,11 +9,10 @@
 </template>
 
 <script>
-import store from "@/store/index";
 export default {
   computed: {
     products() {
-      return store.getters.availableProducts;
+      return this.$store.getters.availableProducts;
     }
   },
   data() {
@@ -28,7 +27,7 @@ export default {
     }); */
     this.loading = true;
     setTimeout(() => {
-      store.dispatch("fetchProducts").then(() => (this.loading = false));
+      this.$store.dispatch("fetchProducts").then(() => (this.loading = false));
     }, 500);
   }
 };
