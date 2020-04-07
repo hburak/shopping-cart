@@ -10,8 +10,9 @@ export default new Vuex.Store({
     products: [],
   },
   getters: {
-    productsCount() {
-      return this.state.products.length;
+    // eslint-disable-next-line no-unused-vars
+    availableProducts(state, getters) {
+      return state.products.filter((product) => product.inventory > 0);
     },
   },
   mutations: {
