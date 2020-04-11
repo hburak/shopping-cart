@@ -8,7 +8,6 @@ export default new Vuex.Store({
   state: {
     products: [],
     cart: [],
-    total: 0,
   },
   getters: {
     // eslint-disable-next-line no-unused-vars
@@ -16,10 +15,23 @@ export default new Vuex.Store({
       return state.products.filter((product) => product.inventory > 0);
     },
     cart(state) {
-      return state.cart;
+      return state.cart.map((cartItem) => {
+        const product = state.products.find(
+          (product) => product.id === cartItem.id
+        );
+        return {
+          id: product.id,
+          quantity: cartItem.quantity,
+          price: product.price,
+          title: product.title,
+        };
+      });
     },
-    total(state) {
-      return state.total;
+    total(state, getters) {
+      return getters.cart.reduce(
+        (total, product) => total + product.price * product.quantity,
+        0
+      );
     },
   },
   mutations: {
@@ -30,6 +42,7 @@ export default new Vuex.Store({
       this.state.cart.push({
         id: product.id,
         title: product.title,
+        price: product.price,
         quantity: 1,
       });
     },
@@ -38,9 +51,6 @@ export default new Vuex.Store({
     },
     decrementInventory(state, product) {
       product.inventory--;
-    },
-    incrementTotal(state, productPrice) {
-      this.state.total += productPrice;
     },
   },
   actions: {
@@ -66,7 +76,6 @@ export default new Vuex.Store({
           context.commit("incrementItemCount", item);
         }
         //commit
-        context.commit("incrementTotal", product.price);
         context.commit("decrementInventory", product);
       }
     },
