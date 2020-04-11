@@ -8,6 +8,7 @@ export default new Vuex.Store({
   state: {
     products: [],
     cart: [],
+    checkoutStatus: null,
   },
   getters: {
     // eslint-disable-next-line no-unused-vars
@@ -52,6 +53,12 @@ export default new Vuex.Store({
     decrementInventory(state, product) {
       product.inventory--;
     },
+    setCheckoutStatus(state, status) {
+      state.checkoutStatus = status;
+    },
+    emptyCart(state) {
+      state.cart = [];
+    },
   },
   actions: {
     fetchProducts({ commit }) {
@@ -78,6 +85,18 @@ export default new Vuex.Store({
         //commit
         context.commit("decrementInventory", product);
       }
+    },
+    checkout({ state, commit }) {
+      shop.buyProducts(
+        state.cart,
+        () => {
+          commit("emptyCart");
+          commit("setCheckoutStatus", "success");
+        },
+        () => {
+          commit("setCheckoutStatus", "fail");
+        }
+      );
     },
   },
   modules: {},

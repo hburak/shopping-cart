@@ -8,6 +8,8 @@
       >{{ item.title }} - {{item.price | currency}} - {{ item.quantity }}</li>
     </ul>
     <p>Total cart price: {{ total | currency }}</p>
+    <button @click="$store.dispatch('checkout')">Buy items</button>
+    <p v-if="$store.state.checkoutStatus">{{$store.state.checkoutStatus}}</p>
   </div>
 </template>
 
