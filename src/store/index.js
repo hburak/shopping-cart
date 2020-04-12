@@ -34,6 +34,11 @@ export default new Vuex.Store({
         0
       );
     },
+    productIsInStock() {
+      return (product) => {
+        return product.inventory > 0;
+      };
+    },
   },
   mutations: {
     setProducts(state, products) {
@@ -72,18 +77,18 @@ export default new Vuex.Store({
         });
       });
     },
-    addToCart(context, product) {
-      if (product.inventory > 0) {
-        const item = context.state.cart.find((item) => item.id === product.id);
+    addToCart({ state, commit, getters }, product) {
+      if (getters.productIsInStock(product)) {
+        const item = state.cart.find((item) => item.id === product.id);
         if (!item) {
           // push to cart
-          context.commit("pushToCart", product);
+          commit("pushToCart", product);
         } else {
           // increment the count
-          context.commit("incrementItemCount", item);
+          commit("incrementItemCount", item);
         }
         //commit
-        context.commit("decrementInventory", product);
+        commit("decrementInventory", product);
       }
     },
     checkout({ state, commit }) {
