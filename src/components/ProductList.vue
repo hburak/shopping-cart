@@ -18,14 +18,15 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
 export default {
   computed: {
-    products() {
-      return this.$store.state.products;
-    },
-    productIsInStock() {
-      return this.$store.getters.productIsInStock;
-    }
+    ...mapState({
+      products: state => state.products
+    }),
+    ...mapGetters({
+      productIsInStock: "productIsInStock"
+    })
   },
   data() {
     return {
@@ -33,9 +34,10 @@ export default {
     };
   },
   methods: {
-    addToCart(product) {
-      this.$store.dispatch("addToCart", product);
-    }
+    ...mapActions({
+      addToCart: "addToCart",
+      fetchProducts: "fetchProducts"
+    })
   },
   created() {
     /* coupling to api removed from the component
@@ -44,7 +46,7 @@ export default {
     }); */
     this.loading = true;
     setTimeout(() => {
-      this.$store.dispatch("fetchProducts").then(() => (this.loading = false));
+      this.fetchProducts().then(() => (this.loading = false));
     }, 500);
   }
 };
