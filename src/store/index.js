@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import shop from "@/api/shop.js";
+import actions from "./actions.js";
 
 Vue.use(Vuex);
 
@@ -8,23 +8,23 @@ export default new Vuex.Store({
   state: {
     products: [],
     cart: [],
-    checkoutStatus: null,
+    checkoutStatus: null
   },
   getters: {
     // eslint-disable-next-line no-unused-vars
     availableProducts(state, getters) {
-      return state.products.filter((product) => product.inventory > 0);
+      return state.products.filter(product => product.inventory > 0);
     },
     cart(state) {
-      return state.cart.map((cartItem) => {
+      return state.cart.map(cartItem => {
         const product = state.products.find(
-          (product) => product.id === cartItem.id
+          product => product.id === cartItem.id
         );
         return {
           id: product.id,
           quantity: cartItem.quantity,
           price: product.price,
-          title: product.title,
+          title: product.title
         };
       });
     },
@@ -35,10 +35,10 @@ export default new Vuex.Store({
       );
     },
     productIsInStock() {
-      return (product) => {
+      return product => {
         return product.inventory > 0;
       };
-    },
+    }
   },
   mutations: {
     setProducts(state, products) {
@@ -49,7 +49,7 @@ export default new Vuex.Store({
         id: product.id,
         title: product.title,
         price: product.price,
-        quantity: 1,
+        quantity: 1
       });
     },
     incrementItemCount(state, item) {
@@ -63,46 +63,8 @@ export default new Vuex.Store({
     },
     emptyCart(state) {
       state.cart = [];
-    },
+    }
   },
-  actions: {
-    fetchProducts({ commit }) {
-      // make the call
-      // run the setProducts mutation
-      // eslint-disable-next-line no-unused-vars
-      return new Promise((resolve, reject) => {
-        shop.getProducts((products) => {
-          commit("setProducts", products);
-          resolve();
-        });
-      });
-    },
-    addToCart({ state, commit, getters }, product) {
-      if (getters.productIsInStock(product)) {
-        const item = state.cart.find((item) => item.id === product.id);
-        if (!item) {
-          // push to cart
-          commit("pushToCart", product);
-        } else {
-          // increment the count
-          commit("incrementItemCount", item);
-        }
-        //commit
-        commit("decrementInventory", product);
-      }
-    },
-    checkout({ state, commit }) {
-      shop.buyProducts(
-        state.cart,
-        () => {
-          commit("emptyCart");
-          commit("setCheckoutStatus", "success");
-        },
-        () => {
-          commit("setCheckoutStatus", "fail");
-        }
-      );
-    },
-  },
-  modules: {},
+  actions,
+  modules: {}
 });
